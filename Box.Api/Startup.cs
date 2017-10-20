@@ -35,11 +35,11 @@ namespace Box.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connString = Configuration.GetConnectionString("MySQL");
+            var connString = Configuration.GetConnectionString("mysql");
 
             services.AddDbContext<DataContext>(options =>
                 options.UseMySql(
-                    connString,
+                    "server=localhost;port=3306;userid=root;password=;database=box",
                     b => b.MigrationsAssembly("BoxApi")));
             services.AddMvc();
         }
@@ -51,8 +51,12 @@ namespace Box.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseMvc();
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<DataContext>();
+                context.Database.EnsureCreated();
+            }
+                app.UseMvc();
         }
     }
 }
