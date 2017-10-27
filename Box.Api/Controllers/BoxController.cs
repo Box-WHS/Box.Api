@@ -1,30 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Box.Api.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace Box.Api.Controllers
 {
-    [Produces("application/json")]
-    [Route("api/box")]
+    [Produces( "application/json", "application/xml" )]
+    [Route( "[controller]" )]
     public class BoxController : Controller
     {
-        private DataContext DataContext { get; set; }
-
-        public BoxController(DataContext dataContext)
+        // GET
+        [HttpGet]
+        public IActionResult Boxes()
         {
-            DataContext = dataContext;
+            return Ok();
         }
 
-        [HttpGet("")]
-        public async Task<IActionResult> Index()
+        /// <summary>
+        ///     Deletes a specific TodoItem.
+        /// </summary>
+        /// <param name="id"></param>
+        [HttpDelete( "{id}" )]
+        public IActionResult Delete( long id )
         {
-            var boxes = await DataContext.Boxes.ToListAsync();
-            return Ok(boxes);
+            if ( DateTime.Now.Ticks % 2 == 0 )
+            {
+                return NotFound();
+            }
+            return new NoContentResult();
         }
     }
 }

@@ -1,62 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Box.Api.Data;
+﻿using Box.Api.Data.DataContexts;
+using Box.Core.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Box.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup( IConfiguration configuration )
         {
             Configuration = configuration;
-            
-        }
-
-        public Startup(IHostingEnvironment env)
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile("config.json", optional:false, reloadOnChange:true);
-            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices( IServiceCollection services )
         {
-            var connString = Configuration.GetConnectionString("mysql");
+            services.AddSingleton( Configuration ); // Add the configuration to the DI
+            services.AddLogging();
 
-            services.AddDbContext<DataContext>(options =>
-                options.UseMySql(
-                    "server=localhost;port=3306;userid=root;password=;database=box",
-                    b => b.MigrationsAssembly("BoxApi")));
+            services.AddServices(); // Locate and add all services with the services attribute
+
+            services.AddDbContext<BoxApiDataContext>();
+
             services.AddMvc();
+
+            services.AddSwaggerGen( c => { c.SwaggerDoc( "v1", new Info { Title = "BoxImpl API", Version = "v1" } ); } );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure( IApplicationBuilder app, IHostingEnvironment env )
         {
-            if (env.IsDevelopment())
+            if ( env.IsDevelopment() )
             {
                 app.UseDeveloperExceptionPage();
             }
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+
+            using ( var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope() )
             {
-                var context = serviceScope.ServiceProvider.GetRequiredService<DataContext>();
+                var context = serviceScope.ServiceProvider.GetService<BoxApiDataContext>();
                 context.Database.EnsureCreated();
             }
-                app.UseMvc();
+
+            app.UseSwagger();
+            app.UseSwaggerUI( c => { c.SwaggerEndpoint( "/swagger/v1/swagger.json", "My API V1" ); } );
+
+            app.UseMvc();
         }
     }
 }
