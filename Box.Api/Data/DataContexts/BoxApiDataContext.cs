@@ -6,26 +6,62 @@ namespace Box.Api.Data.DataContexts
 {
     public class BoxApiDataContext : DbContext
     {
-        public DbSet<Core.Data.Box> Boxes { get; }
-
-        public DbSet<Card> Cards { get; set; }
-        
-        public DbSet<Tray> Trays { get; set; }
-        
-        public BoxApiDataContext( IConfiguration configuration, DbContextOptions<BoxApiDataContext> options ) : base( options )
+        public BoxApiDataContext(IConfiguration configuration, DbContextOptions<BoxApiDataContext> options) : base(
+            options)
         {
             Configuration = configuration;
         }
 
+        public DbSet<Core.Data.Box> Boxes { get; }
+
+        public DbSet<Card> Cards { get; set; }
+
+        public DbSet<Tray> Trays { get; set; }
+
+        public DbSet<User> Users { get; set; }
+
         private IConfiguration Configuration { get; }
 
-        protected override void OnModelCreating( ModelBuilder builder )
+        protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<User>()
+                .HasKey(u => u.UserId);
+
+            builder.Entity<Core.Data.Box>()
+                .HasKey(b => b.Id);
+            builder.Entity<Core.Data.Box>()
+                .HasIndex(b => b.Id);
+            builder.Entity<Core.Data.Box>()
+                .HasMany(b => b.Trays);
+            builder.Entity<Core.Data.Box>()
+                .HasOne(b => b.User);
+               // .WithMany(u => u.Boxes)
+               // .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Tray>()
+                .HasKey(t => t.Id);
+            builder.Entity<Tray>()
+                .HasIndex(t => t.Id);
+            builder.Entity<Tray>()
+                .HasOne(t => t.Box)
+                .WithMany(b => b.Trays)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Tray>()
+                .HasMany(t => t.Cards);
+
+            builder.Entity<Card>()
+                .HasKey(c => c.Id);
+            builder.Entity<Card>()
+                .HasIndex(c => c.Id);
+            builder.Entity<Card>()
+                .HasOne(c => c.Tray)
+                .WithMany(t => t.Cards)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
-        protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder )
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql( Configuration.GetConnectionString( "BoxApiDatabase" ) );
+            optionsBuilder.UseMySql(Configuration.GetConnectionString("BoxApiDatabase"));
         }
 
 

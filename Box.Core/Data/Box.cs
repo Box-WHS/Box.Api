@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Box.Core.Data
 {
@@ -7,16 +8,21 @@ namespace Box.Core.Data
         /// <summary>
         ///     Cardbox ID
         /// </summary>
-        public long BoxId { get; set; }
+        public long Id { get; set; }
 
         /// <summary>
         ///     Name of the Box
         /// </summary>
-        public string BoxName { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         ///     Trays inside the box
         /// </summary>
         public List<Tray> Trays { get; set; }
+        
+        /// <summary>
+        /// User Id
+        /// </summary>
+        public User User { get; set; }
     }
 }

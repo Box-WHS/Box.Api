@@ -23,5 +23,7 @@ namespace Box.Core.Data
         ///     Timestamp when card was processed by user
         /// </summary>
         public DateTime LastProcessed { get; set; }
+        
+        public Tray Tray { get; set; }
     }
 }
