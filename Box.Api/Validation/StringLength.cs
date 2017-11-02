@@ -47,7 +47,7 @@ namespace Box.Api.Validation
                 return ValidationResult.Success;
             }
 
-            return new ValidationResult( Message, new[] { validationContext.MemberName.FirstToLower() } );
+            return new ValidationResult( Message, new[] { validationContext.MemberName.FirstCharToLower() } );
         }
     }
 }

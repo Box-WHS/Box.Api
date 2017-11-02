@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
-using Box.Api.Data.DataContexts;
-using Box.Core.Data;
+using Box.Api.Services.Users;
+using Box.Api.Services.Users.Exceptions;
+using Box.Api.Services.Users.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Box.Api.Controllers
@@ -10,41 +12,48 @@ namespace Box.Api.Controllers
     [Route( "[controller]" )]
     public class UserController : Controller
     {
-        private BoxApiDataContext _context;
-        
-        public UserController(BoxApiDataContext context)
+        private readonly IUserService _userService;
+
+        public UserController( IUserService userService )
         {
-            _context = context;
+            _userService = userService;
         }
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUser(Guid userId)
-        {
-            var user = await _context.FindAsync<User>(userId);
-            return Ok(user);
-        }
-
-        [HttpPost("{userId}")]
-        public async Task<IActionResult> AddUser(Guid userId)
+        [HttpGet( "{userId:guid}" )]
+        public async Task<IActionResult> Get( [FromRoute] Guid userId )
         {
             try
             {
-                var user = new User()
-                {
-                    UserId = userId
-                };
-                using (_context)
-                {
-                    await _context.AddAsync(user);
-                }
-                
-                return CreatedAtRoute("", new { userId = userId}, user  );
+                var user = await _userService.GetUser( userId );
+                return Ok( user );
             }
-            catch (Exception e)
+            catch ( Exception )
             {
-                return Ok(e);
+                return NotFound();
             }
-            
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post( [FromBody] UserData userData )
+        {
+            if ( !ModelState.IsValid )
+            {
+                return BadRequest( ModelState );
+            }
+
+            try
+            {
+                var user = await _userService.AddUser( userData );
+                return CreatedAtAction( nameof(Get), new { userId = user.Id }, user );
+            }
+            catch ( UserExistsException )
+            {
+                return CreatedAtAction( nameof(Get), new { userId = userData.Id }, userData );
+            }
+            catch ( Exception )
+            {
+                return new StatusCodeResult( (int) HttpStatusCode.InternalServerError );
+            }
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Box.Api.Validation
         {
             if ( value != null && !Regex.IsMatch( value.ToString(), GuidRegex ) )
             {
-                return new ValidationResult( Message, new[] { validationContext.MemberName.FirstToLower() } );
+                return new ValidationResult( Message, new[] { validationContext.MemberName.FirstCharToLower() } );
             }
             return ValidationResult.Success;
         }
