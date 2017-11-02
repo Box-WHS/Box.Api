@@ -19,10 +19,15 @@ namespace Box.Core.Data
         ///     Trays inside the box
         /// </summary>
         public List<Tray> Trays { get; set; }
-        
+
         /// <summary>
-        /// User Id
+        ///     User Id
         /// </summary>
         public User User { get; set; }
+
+        /// <summary>
+        ///     Concurrency Toke
+        /// </summary>
+        public Guid ConcurrencyToken { get; set; }
     }
 }
