@@ -5,10 +5,12 @@ namespace Box.Core.Data
 {
     public class User
     {
-        public Guid UserId { get; set; }
+        public Guid Id { get; set; }
         
         public string Username { get; set; }
         
-        //public List<Box> Boxes { get; set; }
+        public string Email { get; set; }
+
+        public List<Box> Boxes { get; set; }
     }
 }

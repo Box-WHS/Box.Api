@@ -12,6 +12,7 @@ namespace Box.Api.Data.DataContexts
             Configuration = configuration;
         }
 
+        // ReSharper disable once UnassignedGetOnlyAutoProperty // Why?
         public DbSet<Core.Data.Box> Boxes { get; }
 
         public DbSet<Card> Cards { get; set; }
@@ -25,7 +26,13 @@ namespace Box.Api.Data.DataContexts
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<User>()
-                .HasKey(u => u.UserId);
+                .HasKey(u => u.Id);
+            builder.Entity<User>()
+                .Property( u => u.Username )
+                .IsRequired();
+            builder.Entity<User>()
+                .Property( u => u.Email )
+                .IsRequired();
 
             builder.Entity<Core.Data.Box>()
                 .HasKey(b => b.Id);
@@ -34,9 +41,12 @@ namespace Box.Api.Data.DataContexts
             builder.Entity<Core.Data.Box>()
                 .HasMany(b => b.Trays);
             builder.Entity<Core.Data.Box>()
-                .HasOne(b => b.User);
-               // .WithMany(u => u.Boxes)
-               // .OnDelete(DeleteBehavior.Cascade);
+                .Property( b => b.ConcurrencyToken )
+                .IsConcurrencyToken();
+            builder.Entity<Core.Data.Box>()
+                .HasOne( b => b.User )
+                .WithMany( b => b.Boxes )
+                .OnDelete( DeleteBehavior.Cascade );
 
             builder.Entity<Tray>()
                 .HasKey(t => t.Id);
