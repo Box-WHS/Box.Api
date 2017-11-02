@@ -26,9 +26,10 @@ namespace Box.Api
 
             services.AddDbContext<BoxApiDataContext>();
 
-            services.AddMvc();
+            services.AddMvc()
+                .AddXmlSerializerFormatters();
 
-            services.AddSwaggerGen( c => { c.SwaggerDoc( "v1", new Info { Title = "BoxImpl API", Version = "v1" } ); } );
+            services.AddSwaggerGen( c => { c.SwaggerDoc( "v1", new Info { Title = "Box API", Version = "v1" } ); } );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,7 +47,7 @@ namespace Box.Api
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI( c => { c.SwaggerEndpoint( "/swagger/v1/swagger.json", "My API V1" ); } );
+            app.UseSwaggerUI( c => { c.SwaggerEndpoint( "/swagger/v1/swagger.json", "Box API V1" ); } );
 
             app.UseMvc();
         }
