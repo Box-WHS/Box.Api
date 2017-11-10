@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Box.Core.Data
+namespace Box.Core.DataTransferObjects
 {
     public class Box
     {
+        public Box()
+        {
+            Trays = new HashSet<Tray>();
+        }
+
         /// <summary>
         ///     Cardbox ID
         /// </summary>
@@ -18,15 +23,20 @@ namespace Box.Core.Data
         /// <summary>
         ///     Trays inside the box
         /// </summary>
-        public List<Tray> Trays { get; set; }
+        public ICollection<Tray> Trays { get; set; }
 
         /// <summary>
-        ///     User Id
+        ///     <see cref="User" />Id of the owner
+        /// </summary>
+        public Guid UserId { get; set; }
+
+        /// <summary>
+        ///     <see cref="User" /> which owns this <see cref="Box" />
         /// </summary>
         public User User { get; set; }
 
         /// <summary>
-        ///     Concurrency Toke
+        ///     Concurrency token
         /// </summary>
         public Guid ConcurrencyToken { get; set; }
     }

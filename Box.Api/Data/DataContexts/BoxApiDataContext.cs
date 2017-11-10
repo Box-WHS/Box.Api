@@ -1,4 +1,5 @@
-﻿using Box.Core.Data;
+﻿using Box.Api.Data.DataContexts.Configurations;
+using Box.Core.DataTransferObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -6,14 +7,14 @@ namespace Box.Api.Data.DataContexts
 {
     public class BoxApiDataContext : DbContext
     {
-        public BoxApiDataContext(IConfiguration configuration, DbContextOptions<BoxApiDataContext> options) : base(
-            options)
+        public BoxApiDataContext( IConfiguration configuration, DbContextOptions<BoxApiDataContext> options )
+            : base( options )
         {
             Configuration = configuration;
         }
 
         // ReSharper disable once UnassignedGetOnlyAutoProperty // Why?
-        public DbSet<Core.Data.Box> Boxes { get; }
+        public DbSet<Core.DataTransferObjects.Box> Boxes { get; }
 
         public DbSet<Card> Cards { get; set; }
 
@@ -23,55 +24,17 @@ namespace Box.Api.Data.DataContexts
 
         private IConfiguration Configuration { get; }
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating( ModelBuilder builder )
         {
-            builder.Entity<User>()
-                .HasKey(u => u.Id);
-            builder.Entity<User>()
-                .Property( u => u.Username )
-                .IsRequired();
-            builder.Entity<User>()
-                .Property( u => u.Email )
-                .IsRequired();
-
-            builder.Entity<Core.Data.Box>()
-                .HasKey(b => b.Id);
-            builder.Entity<Core.Data.Box>()
-                .HasIndex(b => b.Id);
-            builder.Entity<Core.Data.Box>()
-                .HasMany(b => b.Trays);
-            builder.Entity<Core.Data.Box>()
-                .Property( b => b.ConcurrencyToken )
-                .IsConcurrencyToken();
-            builder.Entity<Core.Data.Box>()
-                .HasOne( b => b.User )
-                .WithMany( b => b.Boxes )
-                .OnDelete( DeleteBehavior.Cascade );
-
-            builder.Entity<Tray>()
-                .HasKey(t => t.Id);
-            builder.Entity<Tray>()
-                .HasIndex(t => t.Id);
-            builder.Entity<Tray>()
-                .HasOne(t => t.Box)
-                .WithMany(b => b.Trays)
-                .OnDelete(DeleteBehavior.Cascade);
-            builder.Entity<Tray>()
-                .HasMany(t => t.Cards);
-
-            builder.Entity<Card>()
-                .HasKey(c => c.Id);
-            builder.Entity<Card>()
-                .HasIndex(c => c.Id);
-            builder.Entity<Card>()
-                .HasOne(c => c.Tray)
-                .WithMany(t => t.Cards)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.ApplyConfiguration( new UserConfiguration() );
+            builder.ApplyConfiguration( new BoxConfiguration() );
+            builder.ApplyConfiguration( new TrayConfiguration() );
+            builder.ApplyConfiguration( new CardConfiguration() );
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder )
         {
-            optionsBuilder.UseMySql(Configuration.GetConnectionString("BoxApiDatabase"));
+            optionsBuilder.UseMySql( Configuration.GetConnectionString( "BoxApiDatabase" ) );
         }
 
 

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
-using Box.Api.Extensions;
+using Box.Core.Extensions;
 
-namespace Box.Api.Validation
+namespace Box.Core.Validation
 {
     public class ValidGuidAttribute : ValidationAttribute
     {

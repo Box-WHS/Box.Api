@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Box.Api.Validation;
+using Box.Core.Validation;
 
 namespace Box.Api.Services.Users.Models
 {
@@ -9,7 +9,7 @@ namespace Box.Api.Services.Users.Models
         [ValidGuid]
         public Guid Id { get; set; }
 
-        [Validation.StringLength( 3, 32 )]
+        [Core.Validation.StringLength( 3, 32 )]
         public string Name { get; set; }
 
         [EmailAddress]

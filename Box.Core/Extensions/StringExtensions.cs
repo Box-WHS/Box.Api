@@ -1,4 +1,4 @@
-﻿namespace Box.Api.Extensions
+﻿namespace Box.Core.Extensions
 {
     public static class StringExtensions
     {

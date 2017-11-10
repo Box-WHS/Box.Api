@@ -1,16 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Box.Core.Data
 {
     public class User
     {
+        /// <summary>
+        ///     User Id
+        /// </summary>
         public Guid Id { get; set; }
-        
-        public string Username { get; set; }
-        
-        public string Email { get; set; }
 
-        public List<Box> Boxes { get; set; }
+        /// <summary>
+        ///     Username
+        /// </summary>
+        public string Username { get; set; }
+
+        /// <summary>
+        ///     Email
+        /// </summary>
+        public string Email { get; set; }
     }
 }

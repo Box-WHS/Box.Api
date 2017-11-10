@@ -1,31 +1,71 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Box.Api.Controllers.Results;
+using Box.Api.Services.Boxes;
+using Box.Api.Services.Boxes.Exceptions;
+using Box.Core.Validation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Box.Api.Controllers
 {
-    [Produces( "application/json", "application/xml" )]
-    [Route( "[controller]" )]
+    //[Authorize]
+    [Produces("application/json", "application/xml")]
+    [Route("[controller]")]
     public class BoxController : Controller
     {
-        // GET
-        [HttpGet]
-        public IActionResult Boxes()
+        private readonly IBoxService _boxService;
+
+        public BoxController(IBoxService boxService)
         {
-            return Ok();
+            _boxService = boxService;
         }
 
-        /// <summary>
-        ///     Deletes a specific TodoItem.
-        /// </summary>
-        /// <param name="id"></param>
-        [HttpDelete( "{id}" )]
-        public IActionResult Delete( long id )
+        [HttpGet("{userId:guid}/{boxId:long}")]
+        public async Task<IActionResult> GetBox([FromRoute] Guid userId, [FromRoute] long boxId)
         {
-            if ( DateTime.Now.Ticks % 2 == 0 )
+            try
+            {
+                var box = await _boxService.GetBox(userId, boxId);
+                return Ok(box);
+            }
+            catch (BoxNotFoundException e)
             {
                 return NotFound();
             }
-            return new NoContentResult();
+            return new InternalServerErrorResult();
         }
+
+        [HttpPost("{userId:guid}")]
+        public async Task<IActionResult> AddNewBox([FromRoute] Guid userId, [FromBody] BoxCreationData boxCreationData)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var box = await _boxService.AddBox(userId, boxCreationData);
+
+            return CreatedAtAction(nameof(GetBox), new {boxId = box.Id}, box);
+        }
+
+
+        [HttpPut("{userId:guid}")]
+        public async Task<IActionResult> ChangeName([FromRoute] Guid userId, [FromBody] BoxChangeName data)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var box = await _boxService.ChangeName(userId, data);
+            return Ok(box);
+        }
+    }
+
+    public class BoxCreationData
+    {
+        [StringLength(3, 32)]
+        public string Name { get; set; }
     }
 }

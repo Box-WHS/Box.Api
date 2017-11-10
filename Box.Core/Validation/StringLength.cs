@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Box.Api.Extensions;
+using Box.Core.Extensions;
 
-namespace Box.Api.Validation
+namespace Box.Core.Validation
 {
     public class StringLength : ValidationAttribute
     {

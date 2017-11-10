@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Box.Core.Data
+namespace Box.Core.DataTransferObjects
 {
     public class Card
     {
@@ -23,7 +23,15 @@ namespace Box.Core.Data
         ///     Timestamp when card was processed by user
         /// </summary>
         public DateTime LastProcessed { get; set; }
-        
+
+        /// <summary>
+        ///     Referenced <see cref="Tray" />
+        /// </summary>
         public Tray Tray { get; set; }
+
+        /// <summary>
+        ///     Concurrency token
+        /// </summary>
+        public Guid ConcurrencyToken { get; set; }
     }
 }

@@ -1,10 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Box.Core.Data
+namespace Box.Core.DataTransferObjects
 {
+    /// <summary>
+    ///     Represents a <see cref="Tray" /> which belongs to a <see cref="Box" /> and contains multiple <see cref="Cards" />
+    /// </summary>
     public class Tray
     {
+        public Tray()
+        {
+            Cards = new HashSet<Card>();
+        }
+
         /// <summary>
         ///     Id of the tray
         /// </summary>
@@ -13,7 +21,7 @@ namespace Box.Core.Data
         /// <summary>
         ///     Referenced cards
         /// </summary>
-        public List<Card> Cards { get; set; }
+        public ICollection<Card> Cards { get; set; }
 
         /// <summary>
         ///     Execution interval
