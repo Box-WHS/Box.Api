@@ -1,12 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Box.Core.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Box.Api.Data.DataContexts.Configurations
 {
-    public class BoxConfiguration : IEntityTypeConfiguration<Core.DataTransferObjects.Box>
+    public class BoxConfiguration : IEntityTypeConfiguration<Core.Data.Box>
     {
         /// <inheritdoc />
-        public void Configure( EntityTypeBuilder<Core.DataTransferObjects.Box> builder )
+        public void Configure( EntityTypeBuilder<Core.Data.Box> builder )
         {
             builder.ToTable( "Box" );
 
@@ -25,10 +26,6 @@ namespace Box.Api.Data.DataContexts.Configurations
                 //.ValueGeneratedOnAddOrUpdate()
                 .IsConcurrencyToken();
 
-            builder.HasOne( b => b.User )
-                .WithMany( u => u.Boxes )
-                .HasForeignKey( b => b.UserId )
-                .OnDelete( DeleteBehavior.Cascade );
         }
     }
 }
