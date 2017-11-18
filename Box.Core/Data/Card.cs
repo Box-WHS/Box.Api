@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Box.Core.Data1
+namespace Box.Core.Data
 {
     public class Card
     {

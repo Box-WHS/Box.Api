@@ -1,11 +1,9 @@
 ﻿
-using Box.Core.DataTransferObjects;
-
-namespace Box.Core.Data
+namespace Box.Core.DataTransferObjects
 {
     public static class DtoExtensions
     {
-        public static BoxDto ToBox(this Box box)
+        public static BoxDto ToBox(this Data.Box box)
         {
             return new BoxDto
             {

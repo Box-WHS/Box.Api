@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Box.Api.Services.Boxes
+namespace Box.Api.Services.Boxes.Models
 {
     public class BoxChangeName
     {

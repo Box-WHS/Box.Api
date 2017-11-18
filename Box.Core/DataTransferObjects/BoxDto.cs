@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Box.Core.DataTransferObjects;
+﻿using System.Collections.Generic;
+using Box.Core.Data;
 
-namespace Box.Core.Data
+namespace Box.Core.DataTransferObjects
 {
-    public class Box
+    public class BoxDto
     {
         /// <summary>
         ///     Cardbox ID

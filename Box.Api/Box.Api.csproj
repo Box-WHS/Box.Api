@@ -19,7 +19,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Box.Core\Box.Core.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\Boxes\Models" />
-  </ItemGroup>
 </Project>

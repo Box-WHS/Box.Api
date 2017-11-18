@@ -1,6 +1,6 @@
 ﻿using Box.Core.Validation;
 
-namespace Box.Api.Controllers
+namespace Box.Api.Services.Boxes.Models
 {
     public class BoxCreationData
     {

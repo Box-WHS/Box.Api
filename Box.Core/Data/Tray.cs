@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Box.Core.Data1
+namespace Box.Core.Data
 {
     /// <summary>
-    ///     Represents a <see cref="Tray" /> which belongs to a <see cref="Box1" /> and contains multiple <see cref="Cards" />
+    ///     Represents a <see cref="Tray" /> which belongs to a <see cref="Box" /> and contains multiple <see cref="Cards" />
     /// </summary>
     public class Tray
     {
@@ -31,6 +31,6 @@ namespace Box.Core.Data1
         /// <summary>
         ///     Referenced Box
         /// </summary>
-        public Box1 Box1 { get; set; }
+        public Box Box { get; set; }
     }
 }

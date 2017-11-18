@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Box.Core.DataTransferObjects
+namespace Box.Core.Data
 {
-    public class BoxDto
+    public class Box
     {
-        public BoxDto()
+        public Box()
         {
             Trays = new HashSet<Tray>();
         }

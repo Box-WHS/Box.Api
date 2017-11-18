@@ -1,4 +1,4 @@
-﻿using Box.Core.DataTransferObjects;
+﻿using Box.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

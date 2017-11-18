@@ -1,5 +1,5 @@
 ﻿using Box.Api.Data.DataContexts.Configurations;
-using Box.Core.DataTransferObjects;
+using Box.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -13,7 +13,7 @@ namespace Box.Api.Data.DataContexts
             Configuration = configuration;
         }
 
-        public DbSet<Core.DataTransferObjects.BoxDto> Boxes { get; set; }
+        public DbSet<Core.Data.Box> Boxes { get; set; }
 
         public DbSet<Card> Cards { get; set; }
 
