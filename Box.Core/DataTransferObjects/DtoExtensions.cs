@@ -1,14 +1,17 @@
-﻿namespace Box.Core.DataTransferObjects
+﻿
+using Box.Core.DataTransferObjects;
+
+namespace Box.Core.Data
 {
     public static class DtoExtensions
     {
-        public static Data.User ToUser(this User user)
+        public static BoxDto ToBox(this Box box)
         {
-            return new Data.User
+            return new BoxDto
             {
-                Id = user.Id,
-                Email = user.Email,
-                Username = user.Username
+                Id = box.Id,
+                Name = box.Name,
+                Trays = box.Trays
             };
         }
     }

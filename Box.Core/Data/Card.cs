@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Box.Core.DataTransferObjects
+namespace Box.Core.Data1
 {
     public class Card
     {
