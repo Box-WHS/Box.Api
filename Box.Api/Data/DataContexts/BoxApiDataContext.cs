@@ -13,20 +13,16 @@ namespace Box.Api.Data.DataContexts
             Configuration = configuration;
         }
 
-        // ReSharper disable once UnassignedGetOnlyAutoProperty // Why?
-        public DbSet<Core.DataTransferObjects.Box> Boxes { get; }
+        public DbSet<Core.DataTransferObjects.BoxDto> Boxes { get; set; }
 
         public DbSet<Card> Cards { get; set; }
 
         public DbSet<Tray> Trays { get; set; }
 
-        public DbSet<User> Users { get; set; }
-
         private IConfiguration Configuration { get; }
 
         protected override void OnModelCreating( ModelBuilder builder )
         {
-            builder.ApplyConfiguration( new UserConfiguration() );
             builder.ApplyConfiguration( new BoxConfiguration() );
             builder.ApplyConfiguration( new TrayConfiguration() );
             builder.ApplyConfiguration( new CardConfiguration() );

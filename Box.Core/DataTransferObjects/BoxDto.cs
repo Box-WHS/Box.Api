@@ -31,11 +31,6 @@ namespace Box.Core.DataTransferObjects
         public Guid UserId { get; set; }
 
         /// <summary>
-        ///     <see cref="User" /> which owns this <see cref="Box" />
-        /// </summary>
-        public User User { get; set; }
-
-        /// <summary>
         ///     Concurrency token
         /// </summary>
         public Guid ConcurrencyToken { get; set; }
