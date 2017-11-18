@@ -29,21 +29,23 @@ namespace Box.Api
 
             services.AddDbContext<BoxApiDataContext>();
 
-            services.AddMvc()
+            services.AddMvcCore()
                 .AddXmlSerializerFormatters()
-//                .AddJsonFormatters()
-                .AddJsonOptions(o => o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
-//                .AddAuthorization();
+                .AddJsonFormatters()
+                .AddJsonOptions(o => o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore)
+                .AddAuthorization()
+                .AddApiExplorer();
+                
 
-//            services.AddAuthentication()
-//                .AddIdentityServerAuthentication(
-//                    o =>
-//                    {
-//                        o.Authority = "http://localhost:4711";
-//                        o.RequireHttpsMetadata = false;
-//
-//                        o.ApiName = "box-api";
-//                    });
+            services.AddAuthentication("Bearer")
+                .AddIdentityServerAuthentication(
+                    o =>
+                    {
+                        o.Authority = "http://localhost:4711";
+                        o.RequireHttpsMetadata = false;
+
+                        o.ApiName = "box-api";
+                    });
 
             services.AddSwaggerGen(
                 c =>
@@ -52,7 +54,11 @@ namespace Box.Api
 
                     var basePath = PlatformServices.Default.Application.ApplicationBasePath;
                     var xmlPath = Path.Combine(basePath, "Box.Api.xml");
-                    //c.IncludeXmlComments( xmlPath );
+
+                    if (File.Exists(xmlPath))
+                    {
+                        c.IncludeXmlComments( xmlPath );  
+                    }
                 });
         }
 
@@ -73,7 +79,7 @@ namespace Box.Api
             app.UseSwagger();
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Box API V1"); });
 
-            //app.UseAuthentication();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
