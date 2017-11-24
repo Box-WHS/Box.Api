@@ -41,5 +41,12 @@ namespace Box.Api.Services.Boxes
         /// <param name="userId">User id</param>
         /// <returns>Returns an <see cref="IEnumerable{T}"/> of <see cref="BoxDto"/></returns>
         Task<IEnumerable<BoxDto>> GetBoxes(Guid userId);
+
+        /// <summary>
+        /// Returns all <see cref="BoxDto"/>es which are owned by the specified <paramref name="userId"/>
+        /// </summary>
+        /// <param name="userId">User id</param>
+        /// <returns>All deleted boxes</returns>
+        Task<IEnumerable<BoxDto>> DeleteBoxes(Guid userId);
     }
 }

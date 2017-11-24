@@ -102,5 +102,26 @@ namespace Box.Api.Services.Boxes
                 return boxes.ConvertAll(b => b.ToBox());
             }
         }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<BoxDto>> DeleteBoxes(Guid userId)
+        {
+            using (Context)
+            {
+                var boxes = await Context.Boxes
+                    .Where(b => b.UserId == userId)
+                    .ToListAsync();
+
+                if (boxes == null)
+                {
+                    throw new BoxNotFoundException(0);
+                }
+
+                Context.RemoveRange(boxes);
+                await Context.SaveChangesAsync();
+
+                return boxes.ConvertAll(b => b.ToBox());
+            }
+        }
     }
 }
