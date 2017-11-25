@@ -27,6 +27,11 @@ namespace Box.Core.Data
         ///     Execution interval
         /// </summary>
         public TimeSpan Interval { get; set; }
+        
+        /// <summary>
+        /// Name of the <see cref="Tray"/>
+        /// </summary>
+        public string Name { get; set; }
 
         /// <summary>
         ///     Referenced Box

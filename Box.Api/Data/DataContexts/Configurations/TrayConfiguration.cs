@@ -16,6 +16,10 @@ namespace Box.Api.Data.DataContexts.Configurations
             builder.Property( t => t.Interval )
                 .IsRequired();
 
+            builder.Property(t => t.Name)
+                .HasMaxLength(255)
+                .IsRequired();
+            
             builder.HasMany( t => t.Cards )
                 .WithOne( c => c.Tray )
                 .HasForeignKey( c => c.Id );

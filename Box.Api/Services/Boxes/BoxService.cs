@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Box.Api.Controllers;
 using Box.Api.Data.DataContexts;
+using Box.Api.Extensions;
 using Box.Api.Services.Boxes.Exceptions;
 using Box.Api.Services.Boxes.Models;
 using Box.Core.Data;
@@ -43,7 +44,7 @@ namespace Box.Api.Services.Boxes
                 var result = await Context.AddAsync(box);
                 await Context.SaveChangesAsync();
 
-                return result.Entity.ToBox();
+                return result.Entity.ToBoxDto();
             }
         }
 
@@ -57,14 +58,11 @@ namespace Box.Api.Services.Boxes
                     .Where(b => b.Id == data.Id && b.UserId == userId)
                     .FirstOrDefaultAsync();
 
-                if (box == null)
-                {
-                    throw new BoxNotFoundException(data.Id);
-                }
+                ExceptionExtensions.ThrowIfNull(() => box, e => new BoxNotFoundException(data.Id));
 
                 box.Name = data.NewName;
                 await Context.SaveChangesAsync();
-                return box.ToBox();
+                return box.ToBoxDto();
             }
         }
 
@@ -77,12 +75,9 @@ namespace Box.Api.Services.Boxes
                         .AsNoTracking()
                         .FirstOrDefaultAsync(b => b.UserId == userId && b.Id == boxId);
 
-                if (box == null)
-                {
-                    throw new BoxNotFoundException(boxId);
-                }
+                ExceptionExtensions.ThrowIfNull(()=> box,e => new BoxNotFoundException(boxId, e));
 
-                return box.ToBox();
+                return box.ToBoxDto();
             }
         }
 
@@ -95,11 +90,9 @@ namespace Box.Api.Services.Boxes
                     .Where(b => b.UserId == userId)
                     .ToListAsync();
 
-                if (boxes == null)
-                {
-                    throw new BoxNotFoundException(0);
-                }
-                return boxes.ConvertAll(b => b.ToBox());
+                ExceptionExtensions.ThrowIfNull(() => boxes, e => new BoxNotFoundException(0, e));
+
+                return boxes.ConvertAll(b => b.ToBoxDto());
             }
         }
 
@@ -112,15 +105,12 @@ namespace Box.Api.Services.Boxes
                     .Where(b => b.UserId == userId)
                     .ToListAsync();
 
-                if (boxes == null)
-                {
-                    throw new BoxNotFoundException(0);
-                }
+                ExceptionExtensions.ThrowIfNull(() => boxes, e => new BoxNotFoundException(0, e));
 
                 Context.RemoveRange(boxes);
                 await Context.SaveChangesAsync();
 
-                return boxes.ConvertAll(b => b.ToBox());
+                return boxes.ConvertAll(b => b.ToBoxDto());
             }
         }
     }
