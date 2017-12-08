@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace Box.Api.Controllers
 {
     [Authorize]
-    [Produces("application/json", "application/xml")]
+    [Produces("application/json")]
     [Route("[controller]")]
     public class UserController
     {
@@ -34,7 +34,7 @@ namespace Box.Api.Controllers
             }
             catch (BoxNotFoundException e)
             {
-                _logger.LogInformation($"Failed to delete Boxes from user {userGuid}.");
+                _logger.LogInformation(e, $"Failed to delete Boxes from user {userGuid}.");
                 return new OkResult();
             }
         }
