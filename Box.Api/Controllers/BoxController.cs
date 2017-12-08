@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Security.Claims;
+using System.Diagnostics;
+using System.Globalization;
 using System.Threading.Tasks;
 using Box.Api.Controllers.Results;
 using Box.Api.Services.Boxes;
@@ -8,19 +9,22 @@ using Box.Api.Services.Boxes.Models;
 using Box.Core.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Box.Api.Controllers
 {
     [Authorize]
-    [Produces("application/json", "application/xml")]
+    [Produces("application/json")]
     [Route("[controller]")]
     public class BoxController : Controller
     {
         private readonly IBoxService _boxService;
+        private readonly ILogger _logger;
 
-        public BoxController(IBoxService boxService)
+        public BoxController(IBoxService boxService, ILogger<BoxController> logger)
         {
             _boxService = boxService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -31,12 +35,14 @@ namespace Box.Api.Controllers
                 var boxes = await _boxService.GetBoxes(User.GetId());
                 return Ok(boxes);
             }
-            catch (BoxNotFoundException e)
+            catch (BoxNotFoundException)
             {
+                _logger.LogWarning($"Failed to get boxes for user {User.GetId()}");
                 return NotFound();
             }
             catch (Exception e)
             {
+                _logger.LogError(e.ToString());
                 return new InternalServerErrorResult();
             }
         }
@@ -52,10 +58,12 @@ namespace Box.Api.Controllers
             }
             catch (BoxNotFoundException e)
             {
+                _logger.LogWarning($"Failed to get box (id:{e.Id}) for user {User.GetId()}");
                 return NotFound();
             }
             catch (Exception e)
             {
+                _logger.LogError(e.ToString());
                 return new InternalServerErrorResult();
             }
         }
