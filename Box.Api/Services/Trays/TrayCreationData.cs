@@ -10,8 +10,5 @@ namespace Box.Api.Services.Trays
 
         [Required]
         public TimeSpan Interval { get; set; }
-
-        [Required]
-        public long BoxId { get; set; }
     }
 }
