@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json;
+using Steeltoe.Discovery.Client;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Box.Api
@@ -24,6 +25,8 @@ namespace Box.Api
         {
             services.AddSingleton(Configuration); // Add the configuration to the DI
             services.AddLogging();
+
+            services.AddDiscoveryClient(Configuration);
 
             services.AddServices(); // Locate and add all services with the services attribute
 
@@ -81,6 +84,7 @@ namespace Box.Api
 
             app.UseAuthentication();
             app.UseMvc();
+            app.UseDiscoveryClient();
         }
     }
 }
