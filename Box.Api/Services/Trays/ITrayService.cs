@@ -8,7 +8,7 @@ namespace Box.Api.Services.Trays
 {
     public interface ITrayService
     {
-        Task<TrayDto> GetTray(Guid userId, long boxId, long trayId);
+        Task<TrayDto> GetTray(Guid userId, long trayId);
 
         Task<IEnumerable<TrayDto>> GetTrays(Guid userId, long boxId);
 

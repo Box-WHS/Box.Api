@@ -37,5 +37,7 @@ namespace Box.Core.Data
         ///     Referenced Box
         /// </summary>
         public Box Box { get; set; }
+
+        public User User { get; set; }
     }
 }

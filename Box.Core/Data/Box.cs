@@ -25,14 +25,6 @@ namespace Box.Core.Data
         /// </summary>
         public ICollection<Tray> Trays { get; set; }
 
-        /// <summary>
-        ///     <see cref="User" />Id of the owner
-        /// </summary>
-        public Guid UserId { get; set; }
-
-        /// <summary>
-        ///     Concurrency token
-        /// </summary>
-        public Guid ConcurrencyToken { get; set; }
+        public User User { get; set; }
     }
 }

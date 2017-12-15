@@ -93,5 +93,12 @@ namespace Box.Api.Controllers
             var box = await _boxService.ChangeName(User.GetId(), data);
             return Ok(box);
         }
+
+        [HttpGet("{boxId:long}/trays")]
+        public async Task<IActionResult> GetTrays()
+        {
+            await Task.Delay(0);
+            return Ok();
+        }
     }
 }

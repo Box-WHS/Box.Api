@@ -23,14 +23,13 @@ namespace Box.Api.Services.Trays
             _apiDataContext = apiDataContext;
         }
 
-        public async Task<TrayDto> GetTray(Guid userId, long boxId, long trayId)
+        public async Task<TrayDto> GetTray(Guid userId, long trayId)
         {
             using (_apiDataContext)
             {
                 var tray = await _apiDataContext.Trays
                     .AsNoTracking()
-                    .Include(t => t.Box)
-                    .Where(t => t.Box.Id == boxId && t.Box.UserId == userId)
+                    .Where(t=>t.Id == trayId)
                     .FirstOrDefaultAsync();
 
                 ExceptionExtensions.ThrowIfNull(() => tray, e => new TrayNotFoundException(trayId, e));
@@ -46,7 +45,7 @@ namespace Box.Api.Services.Trays
                 var trays = await _apiDataContext.Trays
                     .AsNoTracking()
                     .Include(t => t.Box)
-                    .Where(t => t.Box.Id == boxId && t.Box.UserId == userId)
+                    .Where(t => t.Box.Id == boxId)
                     .ToListAsync();
 
                 ExceptionExtensions.ThrowIfNull(
@@ -77,6 +76,7 @@ namespace Box.Api.Services.Trays
                 };
 
                 var newTray = await _apiDataContext.AddAsync(tray);
+                await _apiDataContext.SaveChangesAsync();
                 return newTray.Entity.ToTrayDto();
             }
         }
@@ -96,7 +96,6 @@ namespace Box.Api.Services.Trays
 
                 _apiDataContext.Remove(tray);
                 await _apiDataContext.SaveChangesAsync();
-
                 return tray.ToTrayDto();
             }
         }
@@ -118,7 +117,6 @@ namespace Box.Api.Services.Trays
 
                 tray.Name = newName;
                 await _apiDataContext.SaveChangesAsync();
-
                 return tray.ToTrayDto();
             }
         }

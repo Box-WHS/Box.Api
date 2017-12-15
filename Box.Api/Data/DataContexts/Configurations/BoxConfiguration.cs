@@ -21,11 +21,6 @@ namespace Box.Api.Data.DataContexts.Configurations
                 .WithOne( t => t.Box )
                 .HasForeignKey( b => b.Id )
                 .OnDelete( DeleteBehavior.Restrict );
-
-            builder.Property( b => b.ConcurrencyToken )
-                //.ValueGeneratedOnAddOrUpdate()
-                .IsConcurrencyToken();
-
         }
     }
 }

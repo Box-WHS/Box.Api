@@ -36,5 +36,14 @@ namespace Box.Core.DataTransferObjects
                 Tray = card.Tray.Id
             };
         }
+
+        public static UserDto UserDto(this User user)
+        {
+            return new UserDto
+            {
+                Guid = user.Guid,
+                Id = user.Id
+            };
+        }
     }
 }

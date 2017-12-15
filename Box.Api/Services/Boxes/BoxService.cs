@@ -10,6 +10,7 @@ using Box.Api.Services.Boxes.Models;
 using Box.Core.Data;
 using Box.Core.DataTransferObjects;
 using Box.Core.Services;
+using Microsoft.AspNetCore.ResponseCaching.Internal;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -17,19 +18,16 @@ using Microsoft.Extensions.Logging;
 namespace Box.Api.Services.Boxes
 {
     [Service(typeof(IBoxService), ServiceLifetime.Scoped)]
-    public class BoxService : IBoxService
+    public class BoxService : ServiceBase, IBoxService
     {
         /// <inheritdoc />
-        public BoxService(ILogger<BoxService> logger, BoxApiDataContext context)
+        public BoxService(ILogger<BoxService> logger, BoxApiDataContext context) : base(context)
         {
             Logger = logger;
-            Context = context;
         }
 
         private ILogger Logger { get; }
 
-        private BoxApiDataContext Context { get; }
-        
         /// <inheritdoc />
         public async Task<BoxDto> AddBox(Guid userId, BoxCreationData data)
         {
@@ -37,7 +35,7 @@ namespace Box.Api.Services.Boxes
             {
                 var box = new Core.Data.Box
                 {
-                    UserId = userId,
+                    User = await GetUserById(userId),
                     Name = data.Name
                 };
 
@@ -53,9 +51,10 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
-                //var user = await Context.FindAsync<User>( userId );
+                var user = await GetUserById(userId);
                 var box = await Context.Boxes
-                    .Where(b => b.Id == data.Id && b.UserId == userId)
+                    .Include(b => b.User)
+                    .Where(b => b.User == user)
                     .FirstOrDefaultAsync();
 
                 ExceptionExtensions.ThrowIfNull(() => box, e => new BoxNotFoundException(data.Id));
@@ -71,11 +70,13 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
-                    var box = await Context.Boxes
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(b => b.UserId == userId && b.Id == boxId);
+                var user = await GetUserById(userId);
+                var box = await Context.Boxes
+                    .Include(b => b.User)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(b => b.User == user && b.Id == boxId);
 
-                ExceptionExtensions.ThrowIfNull(()=> box,e => new BoxNotFoundException(boxId, e));
+                ExceptionExtensions.ThrowIfNull(() => box, e => new BoxNotFoundException(boxId, e));
 
                 return box.ToBoxDto();
             }
@@ -86,8 +87,11 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
-                var boxes = await Context.Boxes.AsNoTracking()
-                    .Where(b => b.UserId == userId)
+                var user = await GetUserById(userId);
+                var boxes = await Context.Boxes
+                    .AsNoTracking()
+                    .Include(b => b.User)
+                    .Where(b => b.User == user)
                     .ToListAsync();
 
                 ExceptionExtensions.ThrowIfNull(() => boxes, e => new BoxNotFoundException(0, e));
@@ -101,8 +105,9 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
+                var user = await GetUserById(userId);
                 var boxes = await Context.Boxes
-                    .Where(b => b.UserId == userId)
+                    .Where(b => b.User == user)
                     .ToListAsync();
 
                 ExceptionExtensions.ThrowIfNull(() => boxes, e => new BoxNotFoundException(0, e));
@@ -113,5 +118,26 @@ namespace Box.Api.Services.Boxes
                 return boxes.ConvertAll(b => b.ToBoxDto());
             }
         }
+
+        public async Task<User> AddUser(Guid userId)
+        {
+            using (Context)
+            {
+                var user = new User
+                {
+                    Guid = userId
+                };
+
+                var newUser = await Context.AddAsync(user);
+                await Context.SaveChangesAsync();
+                return newUser.Entity;
+            }
+        }
+
+        public async Task<User> GetUser(Guid userId)
+        {
+            return await GetUserById(userId);
+        }
+
     }
 }

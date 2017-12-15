@@ -29,9 +29,6 @@ namespace Box.Core.Data
         /// </summary>
         public Tray Tray { get; set; }
 
-        /// <summary>
-        ///     Concurrency token
-        /// </summary>
-        public Guid ConcurrencyToken { get; set; }
+        public User User { get; set; }
     }
 }

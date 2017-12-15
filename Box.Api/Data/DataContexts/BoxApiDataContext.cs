@@ -7,13 +7,15 @@ namespace Box.Api.Data.DataContexts
 {
     public class BoxApiDataContext : DbContext
     {
-        public BoxApiDataContext( IConfiguration configuration, DbContextOptions<BoxApiDataContext> options )
-            : base( options )
+        public BoxApiDataContext(IConfiguration configuration, DbContextOptions<BoxApiDataContext> options)
+            : base(options)
         {
             Configuration = configuration;
         }
 
         public DbSet<Core.Data.Box> Boxes { get; set; }
+
+        public DbSet<User> Users { get; set; }
 
         public DbSet<Card> Cards { get; set; }
 
@@ -21,16 +23,17 @@ namespace Box.Api.Data.DataContexts
 
         private IConfiguration Configuration { get; }
 
-        protected override void OnModelCreating( ModelBuilder builder )
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.ApplyConfiguration( new BoxConfiguration() );
-            builder.ApplyConfiguration( new TrayConfiguration() );
-            builder.ApplyConfiguration( new CardConfiguration() );
+            builder.ApplyConfiguration(new UserConfiguration());
+            builder.ApplyConfiguration(new BoxConfiguration());
+            builder.ApplyConfiguration(new TrayConfiguration());
+            builder.ApplyConfiguration(new CardConfiguration());
         }
 
-        protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder )
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql( Configuration.GetConnectionString( "BoxApiDatabase" ) );
+            optionsBuilder.UseMySql(Configuration.GetConnectionString("BoxApiDatabase"));
         }
 
 

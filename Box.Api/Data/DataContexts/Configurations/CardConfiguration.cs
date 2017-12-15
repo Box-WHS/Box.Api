@@ -13,10 +13,6 @@ namespace Box.Api.Data.DataContexts.Configurations
 
             builder.HasKey( c => c.Id );
 
-            builder.Property( c => c.ConcurrencyToken )
-                //.ValueGeneratedOnAddOrUpdate()
-                .IsConcurrencyToken();
-
             builder.Property( c => c.Answer )
                 .HasMaxLength( 4000 )
                 .IsRequired();

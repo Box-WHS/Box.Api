@@ -11,7 +11,7 @@ namespace Box.Api.Data.DataContexts.Configurations
         {
             builder.ToTable( "Tray" );
 
-            builder.HasKey( t => t.Id );
+            builder.HasKey(t => t.Id);
 
             builder.Property( t => t.Interval )
                 .IsRequired();
