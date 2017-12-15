@@ -6,9 +6,11 @@ using Box.Api.Controllers.Results;
 using Box.Api.Services.Boxes;
 using Box.Api.Services.Boxes.Exceptions;
 using Box.Api.Services.Boxes.Models;
+using Box.Api.Services.Trays;
 using Box.Core.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace Box.Api.Controllers
@@ -95,10 +97,33 @@ namespace Box.Api.Controllers
         }
 
         [HttpGet("{boxId:long}/trays")]
-        public async Task<IActionResult> GetTrays()
+        public async Task<IActionResult> GetTrays([FromRoute] long boxId)
         {
-            await Task.Delay(0);
-            return Ok();
+            try
+            {
+                var trays = await _boxService.GetTrays(User.GetId(), boxId);
+                return Ok(trays);
+            }
+            catch (Exception e)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost("{boxId:long}/tray")]
+        public async Task<IActionResult> AddTray([FromRoute] long boxId, [FromBody] TrayCreationData creationData)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var tray = await _boxService.AddTray(User.GetId(), boxId, creationData);
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
         }
     }
 }

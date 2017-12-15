@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Box.Api.Controllers;
 using Box.Api.Services.Boxes.Exceptions;
 using Box.Api.Services.Boxes.Models;
+using Box.Core.Data;
 using Box.Core.DataTransferObjects;
 
 namespace Box.Api.Services.Boxes
@@ -48,5 +49,9 @@ namespace Box.Api.Services.Boxes
         /// <param name="userId">User id</param>
         /// <returns>All deleted boxes</returns>
         Task<IEnumerable<BoxDto>> DeleteBoxes(Guid userId);
+
+        Task<User> GetUser(Guid userIdGuid);
+
+        Task<IEnumerable<TrayDto>> GetTrays(Guid userid, long boxId);
     }
 }

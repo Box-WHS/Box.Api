@@ -139,5 +139,26 @@ namespace Box.Api.Services.Boxes
             return await GetUserById(userId);
         }
 
+        public async Task<IEnumerable<TrayDto>> GetTrays(Guid userid, long boxId)
+        {
+            using (Context)
+            {
+                var user = await GetUserById(userid);
+                var box = await Context.Boxes
+                    .AsNoTracking()
+                    .Include(b => b.User)
+                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User == user);
+                var trays = await Context.Trays
+                    .AsNoTracking()
+                    .Include(t => t.Box)
+                    .Include(t => t.User)
+                    .Where(t => t.Box == box && t.User == user)
+                    .ToListAsync();
+
+                return trays.ConvertAll(t => t.ToTrayDto());
+            }
+        }
+
+
     }
 }

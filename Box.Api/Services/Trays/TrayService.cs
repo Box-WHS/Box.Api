@@ -14,22 +14,21 @@ using Microsoft.EntityFrameworkCore;
 namespace Box.Api.Services.Trays
 {
     [Service(typeof(ITrayService))]
-    public class TrayService : ITrayService
+    public class TrayService : ServiceBase, ITrayService
     {
-        private readonly BoxApiDataContext _apiDataContext;
-
-        public TrayService(BoxApiDataContext apiDataContext)
+        public TrayService(BoxApiDataContext apiDataContext): base(apiDataContext)
         {
-            _apiDataContext = apiDataContext;
         }
 
         public async Task<TrayDto> GetTray(Guid userId, long trayId)
         {
-            using (_apiDataContext)
+            using (Context)
             {
-                var tray = await _apiDataContext.Trays
+                var user = await GetUserById(userId);
+                var tray = await Context.Trays
                     .AsNoTracking()
-                    .Where(t=>t.Id == trayId)
+                    .Include(t=> t.User)
+                    .Where(t=>t.Id == trayId && t.User == user)
                     .FirstOrDefaultAsync();
 
                 ExceptionExtensions.ThrowIfNull(() => tray, e => new TrayNotFoundException(trayId, e));
@@ -40,9 +39,9 @@ namespace Box.Api.Services.Trays
 
         public async Task<IEnumerable<TrayDto>> GetTrays(Guid userId, long boxId)
         {
-            using (_apiDataContext)
+            using (Context)
             {
-                var trays = await _apiDataContext.Trays
+                var trays = await Context.Trays
                     .AsNoTracking()
                     .Include(t => t.Box)
                     .Where(t => t.Box.Id == boxId)
@@ -58,10 +57,13 @@ namespace Box.Api.Services.Trays
 
         public async Task<TrayDto> AddTray(Guid userId, long boxId, TrayCreationData data)
         {
-            using (_apiDataContext)
+            using (Context)
             {
-                var box = await _apiDataContext.Boxes
-                    .Where(b => b.Id == boxId)
+                var user = await GetUserById(userId);
+
+                var box = await Context.Boxes
+                    .Include(b => b.User)
+                    .Where(b => b.Id == boxId && b.User == user)
                     .FirstOrDefaultAsync();
 
                 ExceptionExtensions.ThrowIfNull(
@@ -72,51 +74,54 @@ namespace Box.Api.Services.Trays
                 {
                     Box = box,
                     Interval = data.Interval,
-                    Name = data.Name
+                    Name = data.Name,
+                    User = user
                 };
 
-                var newTray = await _apiDataContext.AddAsync(tray);
-                await _apiDataContext.SaveChangesAsync();
+                var newTray = await Context.AddAsync(tray);
+                await Context.SaveChangesAsync();
                 return newTray.Entity.ToTrayDto();
             }
         }
 
-        public async Task<TrayDto> DeleteTray(Guid userId, long boxId, long trayId)
+        public async Task<TrayDto> DeleteTray(Guid userId, long trayId)
         {
-            using (_apiDataContext)
+            using (Context)
             {
-                var tray = await _apiDataContext.Trays
-                    .Include(t => t.Box)
-                    .Where(t => t.Box.Id == boxId && t.Id == trayId)
+                var user = await GetUserById(userId);
+                var tray = await Context.Trays
+                    .Include(t => t.User)
+                    .Where(t => t.Id == trayId && t.User == user)
                     .FirstOrDefaultAsync();
 
                 ExceptionExtensions.ThrowIfNull(
                     () => tray,
                     e => new TrayNotFoundException(trayId, e));
 
-                _apiDataContext.Remove(tray);
-                await _apiDataContext.SaveChangesAsync();
+                Context.Remove(tray);
+                await Context.SaveChangesAsync();
                 return tray.ToTrayDto();
             }
         }
 
-        public async Task<TrayDto> RenameTray(Guid userId, long boxId, long trayId, string newName)
+        public async Task<TrayDto> RenameTray(Guid userId, long trayId, string newName)
         {
             ExceptionExtensions.ThrowIfNullOrEmpty(() => newName);
 
-            using (_apiDataContext)
+            using (Context)
             {
-                var tray = await _apiDataContext.Trays
+                var user = await GetUserById(userId);
+                var tray = await Context.Trays
                     .AsTracking()
-                    .Include(t => t.Box)
-                    .Where(t => t.Box.Id == boxId && t.Id == trayId)
+                    .Include(t => t.User)
+                    .Where(t => t.Id == trayId && t.User == user)
                     .FirstOrDefaultAsync();
 
 
                 ExceptionExtensions.ThrowIfNull(() => tray, e => new TrayNotFoundException(trayId, e));
 
                 tray.Name = newName;
-                await _apiDataContext.SaveChangesAsync();
+                await Context.SaveChangesAsync();
                 return tray.ToTrayDto();
             }
         }

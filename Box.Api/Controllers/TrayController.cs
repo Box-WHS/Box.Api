@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Box.Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Produces("application/json")]
     [Route("[controller]")]
     public class TrayController : Controller
@@ -23,26 +23,6 @@ namespace Box.Api.Controllers
             _trayService = trayService;
             _logger = logger;
         }
-
-//        [HttpGet("{boxId:long}")]
-//        public async Task<IActionResult> GetTraysTask([FromRoute] long boxId)
-//        {
-//            try
-//            {
-//                var trays = await _trayService.GetTrays(User.GetId(), boxId);
-//                return Ok(trays);
-//            }
-//            catch (TrayHandlingException e)
-//            {
-//                _logger.LogWarning(e, $"Failed to return trays from box {boxId} for user {User.GetId()}");
-//                return NotFound();
-//            }
-//            catch (Exception e)
-//            {
-//                _logger.LogError(e.ToString());
-//                return new InternalServerErrorResult();
-//            }
-//        }
 
         [HttpGet("{trayId:long}")]
         public async Task<IActionResult> GetTray( [FromRoute]long trayId)
@@ -85,15 +65,14 @@ namespace Box.Api.Controllers
             }
         }
 
-        [HttpPatch("{boxId:long}/{trayId:long}/{newName:required:length(3,255)}")]
+        [HttpPatch("{trayId:long}/{newName:required:length(3,255)}")]
         public async Task<IActionResult> RenameTrayTask(
-            [FromRoute] long boxId,
             [FromRoute] long trayId,
             [FromRoute] string name)
         {
             try
             {
-                var tray = await _trayService.RenameTray(User.GetId(), boxId, trayId, name);
+                var tray = await _trayService.RenameTray(User.GetId(), trayId, name);
                 return CreatedAtRoute(nameof(GetTray), new {boxId = tray.BoxId, trayId = tray.Id}, tray);
             }
             catch (TrayHandlingException)
@@ -106,12 +85,12 @@ namespace Box.Api.Controllers
             }
         }
 
-        [HttpDelete("{boxId:long}/{trayId:long}")]
-        public async Task<IActionResult> DeleteTrayTask([FromRoute] long boxId, [FromRoute] long trayId)
+        [HttpDelete("{trayId:long}")]
+        public async Task<IActionResult> DeleteTrayTask( [FromRoute] long trayId)
         {
             try
             {
-                var tray = await _trayService.DeleteTray(User.GetId(), boxId, trayId);
+                var tray = await _trayService.DeleteTray(User.GetId(), trayId);
                 return Ok(tray);
             }
             catch (TrayHandlingException e)

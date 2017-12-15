@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Box.Api.Controllers
 {
-    //[Authorize]
     [Produces("application/json")]
     [Route("[controller]")]
     public class UserController : Controller
@@ -33,7 +32,12 @@ namespace Box.Api.Controllers
         {
             try
             {
-                var user = await _boxService.AddUser()
+                var user = await _boxService.AddUser(User.GetId());
+                return CreatedAtAction(nameof(GetUser), new {userId = user.Guid}, user.UserDto());
+            }
+            catch (Exception)
+            {
+                return new BadRequestResult();
             }
         }
         

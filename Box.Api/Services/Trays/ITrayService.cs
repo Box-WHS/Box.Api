@@ -14,8 +14,8 @@ namespace Box.Api.Services.Trays
 
         Task<TrayDto> AddTray(Guid userId, long boxId, TrayCreationData data);
 
-        Task<TrayDto> DeleteTray(Guid userId, long boxId, long trayId);
+        Task<TrayDto> DeleteTray(Guid userId, long trayId);
 
-        Task<TrayDto> RenameTray(Guid userId, long boxId, long trayId, string newName);
+        Task<TrayDto> RenameTray(Guid userId, long trayId, string newName);
     }
 }
