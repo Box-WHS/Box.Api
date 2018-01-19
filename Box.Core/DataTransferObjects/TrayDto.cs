@@ -7,6 +7,10 @@ namespace Box.Core.DataTransferObjects
     /// </summary>
     public class TrayDto
     {
+        /// <summary>
+        /// Name of the <see cref="TrayDto"/>
+        /// </summary>
+        public string Name { get; set; }
 
         /// <summary>
         ///     Id of the tray

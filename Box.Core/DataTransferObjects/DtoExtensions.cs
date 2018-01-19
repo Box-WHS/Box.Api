@@ -19,6 +19,7 @@ namespace Box.Core.DataTransferObjects
         {
             return new TrayDto
             {
+                Name = tray.Name,
                 BoxId = tray.Box.Id,
                 Id = tray.Id,
                 Interval = tray.Interval
