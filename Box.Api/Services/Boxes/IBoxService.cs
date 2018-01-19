@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using Box.Api.Controllers;
 using Box.Api.Services.Boxes.Exceptions;
 using Box.Api.Services.Boxes.Models;
+using Box.Api.Services.Trays;
 using Box.Core.Data;
 using Box.Core.DataTransferObjects;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Box.Api.Services.Boxes
 {
@@ -53,5 +55,15 @@ namespace Box.Api.Services.Boxes
         Task<User> GetUser(Guid userIdGuid);
 
         Task<IEnumerable<TrayDto>> GetTrays(Guid userid, long boxId);
+        
+        Task<TrayDto> AddTray(Guid getId, long boxId, TrayCreationData creationData);
+        
+        Task<TrayDto> GetTray(Guid getId, long boxId, long trayId);
+
+        Task<IEnumerable<CardDto>> GetCards(Guid userId, long boxId, long trayId);
+        
+        Task<CardDto> GetCard(Guid userId, long boxId, long trayId, long cardId);
+        
+        Task<CardDto> AddCard(Guid userId, long boxId, long trayId, CardCreationData data);
     }
 }

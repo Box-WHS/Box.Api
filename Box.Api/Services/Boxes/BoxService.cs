@@ -7,6 +7,7 @@ using Box.Api.Data.DataContexts;
 using Box.Api.Extensions;
 using Box.Api.Services.Boxes.Exceptions;
 using Box.Api.Services.Boxes.Models;
+using Box.Api.Services.Trays;
 using Box.Core.Data;
 using Box.Core.DataTransferObjects;
 using Box.Core.Services;
@@ -159,6 +160,115 @@ namespace Box.Api.Services.Boxes
             }
         }
 
+        public async Task<TrayDto> AddTray(Guid userId, long boxId, TrayCreationData creationData)
+        {
+            using (Context)
+            {
+                var user = await GetUserById(userId);
+                var box = await Context.Boxes
+                    .Include(b => b.User)
+                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User == user);
 
+                var tray = new Tray
+                {
+                    Box = box,
+                    User = user,
+                    Name = creationData.Name
+                };
+
+                var newTray = await Context.Trays.AddAsync(tray);
+                await Context.SaveChangesAsync();
+
+                return newTray.Entity.ToTrayDto();
+            }
+        }
+
+        public async Task<TrayDto> GetTray(Guid userId, long boxId, long trayId)
+        {
+            using (Context)
+            {
+                var user = await GetUserById(userId);
+                var box = await Context.Boxes
+                    .Include(b => b.User)
+                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User == user);
+
+                var tray = await Context.Trays
+                    .Where(t => t.Box == box && t.User == user && t.Id == trayId)
+                    .FirstOrDefaultAsync();
+
+                return tray.ToTrayDto();
+            }
+        }
+
+        public async Task<IEnumerable<CardDto>> GetCards(Guid userId, long boxId, long trayId)
+        {
+            using (Context)
+            {
+                var user = await GetUserById(userId);
+                var box = await Context.Boxes
+                    .Include(b => b.User)
+                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User == user);
+
+                var tray = await Context.Trays
+                    .Where(t => t.Box == box && t.User == user && t.Id == trayId)
+                    .FirstOrDefaultAsync();
+
+                var cards = await Context.Cards
+                    .Include(c => c.Tray)
+                    .Where(c => c.Tray == tray)
+                    .ToListAsync();
+
+                return cards.ConvertAll(c => c.ToCardDto());
+            }
+        }
+
+        public async Task<CardDto> GetCard(Guid userId, long boxId, long trayId, long cardId)
+        {
+            using (Context)
+            {
+                var user = await GetUserById(userId);
+                var box = await Context.Boxes
+                    .Include(b => b.User)
+                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User == user);
+
+                var tray = await Context.Trays
+                    .Where(t => t.Box == box && t.User == user && t.Id == trayId)
+                    .FirstOrDefaultAsync();
+
+                var card = await Context.Cards
+                    .Include(c => c.Tray)
+                    .FirstOrDefaultAsync(c => c.Tray == tray && c.Id == cardId);
+
+                return card.ToCardDto();
+            }
+        }
+
+        public async Task<CardDto> AddCard(Guid userId, long boxId, long trayId, CardCreationData data)
+        {
+            using (Context)
+            {
+                var user = await GetUserById(userId);
+                var box = await Context.Boxes
+                    .Include(b => b.User)
+                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User == user);
+
+                var tray = await Context.Trays
+                    .Where(t => t.Box == box && t.User == user && t.Id == trayId)
+                    .FirstOrDefaultAsync();
+
+                var card = new Card
+                {
+                    Answer = data.Answer,
+                    Question = data.Question,
+                    Tray = tray,
+                    User = user
+                };
+
+                var newCard = await Context.Cards.AddAsync(card);
+                await Context.SaveChangesAsync();
+                
+                return newCard.Entity.ToCardDto();
+            }
+        }
     }
 }

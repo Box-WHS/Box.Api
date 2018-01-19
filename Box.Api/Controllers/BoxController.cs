@@ -110,6 +110,20 @@ namespace Box.Api.Controllers
             }
         }
 
+        [HttpGet("{boxId:long}/tray/{trayId:long}")]
+        public async Task<IActionResult> GetTray([FromRoute] long boxId, [FromRoute] long trayId)
+        {
+            try
+            {
+                var tray = await _boxService.GetTray(User.GetId(), boxId, trayId);
+                return Ok(tray);
+            }
+            catch (Exception e)
+            {
+                return NotFound();
+            }
+        }
+
         [HttpPost("{boxId:long}/tray")]
         public async Task<IActionResult> AddTray([FromRoute] long boxId, [FromBody] TrayCreationData creationData)
         {
@@ -119,11 +133,71 @@ namespace Box.Api.Controllers
             try
             {
                 var tray = await _boxService.AddTray(User.GetId(), boxId, creationData);
+                return CreatedAtAction(nameof(GetTray), new {boxId, trayId = tray.Id}, tray);
+
+                return Ok(tray);
             }
             catch (Exception e)
             {
                 return BadRequest();
             }
+        }
+
+        [HttpGet("{boxId:long}/tray/{trayId:long}/cards")]
+        public async Task<IActionResult> GetCards([FromRoute] long boxId, [FromRoute] long trayId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var cards = await _boxService.GetCards(User.GetId(), boxId, trayId);
+                return Ok(cards);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet("{boxId:long}/tray/{trayId:long}/card/{cardId:long}")]
+        public async Task<IActionResult> GetCard(
+            [FromRoute] long boxId,
+            [FromRoute] long trayId,
+            [FromRoute] long cardId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var card = await _boxService.GetCard(User.GetId(), boxId, trayId, cardId);
+                return Ok(card);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }   
+        }
+
+        [HttpPost("{boxId:long}/tray/{trayId:long}/card")]
+        public async Task<IActionResult> AddCard(
+            [FromRoute] long boxId,
+            [FromRoute] long trayId,
+            [FromBody] CardCreationData data)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            try
+            {
+                var card = await _boxService.AddCard(User.GetId(), boxId, trayId, data);
+                return CreatedAtAction(nameof(GetCard), new { boxId, trayId, cardId = card.Id}, card);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }   
         }
     }
 }
