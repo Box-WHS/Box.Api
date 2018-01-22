@@ -26,7 +26,7 @@ namespace Box.Api
             services.AddSingleton(Configuration); // Add the configuration to the DI
             services.AddLogging();
 
-            //services.AddDiscoveryClient(Configuration);
+            services.AddDiscoveryClient(Configuration);
 
             services.AddServices(); // Locate and add all services with the services attribute
 
@@ -44,7 +44,7 @@ namespace Box.Api
                 .AddIdentityServerAuthentication(
                     o =>
                     {
-                        o.Authority = "http://localhost:4711";
+                        o.Authority = $"{Configuration["ZuulProxy"]}/auth";
                         o.RequireHttpsMetadata = false;
 
                         o.ApiName = "box-api";
@@ -84,7 +84,7 @@ namespace Box.Api
 
             app.UseAuthentication();
             app.UseMvc();
-            //app.UseDiscoveryClient();
+            app.UseDiscoveryClient();
         }
     }
 }
