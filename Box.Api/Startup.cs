@@ -50,6 +50,13 @@ namespace Box.Api
                         o.ApiName = "box-api";
                     });
 
+            services.AddCors(options => options.AddPolicy("ApiPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
+
             services.AddSwaggerGen(
                 c =>
                 {
@@ -83,6 +90,7 @@ namespace Box.Api
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Box API V1"); });
 
             app.UseAuthentication();
+            app.UseCors("ApiPolicy");
             app.UseMvc();
             app.UseDiscoveryClient();
         }

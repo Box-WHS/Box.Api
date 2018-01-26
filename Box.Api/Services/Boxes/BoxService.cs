@@ -52,10 +52,10 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
-                var user = await GetUserById(userId);
+               //var user = await GetUserById(userId);
                 var box = await Context.Boxes
                     .Include(b => b.User)
-                    .Where(b => b.User == user)
+                    .Where(b => b.User.Guid == userId)
                     .FirstOrDefaultAsync();
 
                 ExceptionExtensions.ThrowIfNull(() => box, e => new BoxNotFoundException(data.Id));
@@ -71,11 +71,11 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
-                var user = await GetUserById(userId);
+               //var user = await GetUserById(userId);
                 var box = await Context.Boxes
                     .Include(b => b.User)
                     .AsNoTracking()
-                    .FirstOrDefaultAsync(b => b.User == user && b.Id == boxId);
+                    .FirstOrDefaultAsync(b => b.User.Guid == userId && b.Id == boxId);
 
                 ExceptionExtensions.ThrowIfNull(() => box, e => new BoxNotFoundException(boxId, e));
 
@@ -88,11 +88,11 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
-                var user = await GetUserById(userId);
+               //var user = await GetUserById(userId);
                 var boxes = await Context.Boxes
                     .AsNoTracking()
                     .Include(b => b.User)
-                    .Where(b => b.User == user)
+                    .Where(b => b.User.Guid == userId)
                     .ToListAsync();
 
                 ExceptionExtensions.ThrowIfNull(() => boxes, e => new BoxNotFoundException(0, e));
@@ -106,9 +106,9 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
-                var user = await GetUserById(userId);
+               //var user = await GetUserById(userId);
                 var boxes = await Context.Boxes
-                    .Where(b => b.User == user)
+                    .Where(b => b.User.Guid == userId)
                     .ToListAsync();
 
                 ExceptionExtensions.ThrowIfNull(() => boxes, e => new BoxNotFoundException(0, e));
@@ -140,20 +140,21 @@ namespace Box.Api.Services.Boxes
             return await GetUserById(userId);
         }
 
-        public async Task<IEnumerable<TrayDto>> GetTrays(Guid userid, long boxId)
+        public async Task<IEnumerable<TrayDto>> GetTrays(Guid userId, long boxId)
         {
             using (Context)
             {
-                var user = await GetUserById(userid);
+               //var user = await GetUserById(userId);
                 var box = await Context.Boxes
                     .AsNoTracking()
                     .Include(b => b.User)
-                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User == user);
+                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User.Guid == userId);
+
                 var trays = await Context.Trays
                     .AsNoTracking()
                     .Include(t => t.Box)
                     .Include(t => t.User)
-                    .Where(t => t.Box == box && t.User == user)
+                    .Where(t => t.Box == box)
                     .ToListAsync();
 
                 return trays.ConvertAll(t => t.ToTrayDto());
@@ -164,15 +165,15 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
-                var user = await GetUserById(userId);
+               //var user = await GetUserById(userId);
                 var box = await Context.Boxes
                     .Include(b => b.User)
-                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User == user);
+                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User.Guid == userId);
 
                 var tray = new Tray
                 {
                     Box = box,
-                    User = user,
+                    User = box.User,
                     Name = creationData.Name
                 };
 
@@ -187,13 +188,13 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
-                var user = await GetUserById(userId);
+               //var user = await GetUserById(userId);
                 var box = await Context.Boxes
                     .Include(b => b.User)
-                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User == user);
+                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User.Guid == userId);
 
                 var tray = await Context.Trays
-                    .Where(t => t.Box == box && t.User == user && t.Id == trayId)
+                    .Where(t => t.Box == box && t.Id == trayId)
                     .FirstOrDefaultAsync();
 
                 return tray.ToTrayDto();
@@ -204,13 +205,13 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
-                var user = await GetUserById(userId);
+               //var user = await GetUserById(userId);
                 var box = await Context.Boxes
                     .Include(b => b.User)
-                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User == user);
+                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User.Guid == userId);
 
                 var tray = await Context.Trays
-                    .Where(t => t.Box == box && t.User == user && t.Id == trayId)
+                    .Where(t => t.Box == box && t.Id == trayId)
                     .FirstOrDefaultAsync();
 
                 var cards = await Context.Cards
@@ -226,13 +227,13 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
-                var user = await GetUserById(userId);
+                //var user = await GetUserById(userId);
                 var box = await Context.Boxes
                     .Include(b => b.User)
-                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User == user);
+                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User.Guid == userId);
 
                 var tray = await Context.Trays
-                    .Where(t => t.Box == box && t.User == user && t.Id == trayId)
+                    .Where(t => t.Box == box && t.Id == trayId)
                     .FirstOrDefaultAsync();
 
                 var card = await Context.Cards
@@ -247,13 +248,13 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
-                var user = await GetUserById(userId);
+               ////var user = await GetUserById(userId);
                 var box = await Context.Boxes
                     .Include(b => b.User)
-                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User == user);
+                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User.Guid == userId);
 
                 var tray = await Context.Trays
-                    .Where(t => t.Box == box && t.User == user && t.Id == trayId)
+                    .Where(t => t.Box == box && t.Id == trayId)
                     .FirstOrDefaultAsync();
 
                 var card = new Card
@@ -261,7 +262,7 @@ namespace Box.Api.Services.Boxes
                     Answer = data.Answer,
                     Question = data.Question,
                     Tray = tray,
-                    User = user
+                    User = box.User
                 };
 
                 var newCard = await Context.Cards.AddAsync(card);
