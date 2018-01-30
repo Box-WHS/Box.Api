@@ -134,8 +134,6 @@ namespace Box.Api.Controllers
             {
                 var tray = await _boxService.AddTray(User.GetId(), boxId, creationData);
                 return CreatedAtAction(nameof(GetTray), new {boxId, trayId = tray.Id}, tray);
-
-                return Ok(tray);
             }
             catch (Exception e)
             {

@@ -19,14 +19,12 @@ namespace Box.Api.Data.DataContexts.Configurations
             builder.Property(t => t.Name)
                 .HasMaxLength(255)
                 .IsRequired();
-            
-            builder.HasMany( t => t.Cards )
-                .WithOne( c => c.Tray )
-                .HasForeignKey( c => c.Id );
 
-            builder.HasOne( t => t.Box )
-                .WithMany( b => b.Trays )
-                .HasForeignKey( t => t.Id );
+            builder.HasMany(t => t.Cards)
+                .WithOne(c => c.Tray);
+
+            builder.HasOne(t => t.Box)
+                .WithMany(b => b.Trays);
         }
     }
 }

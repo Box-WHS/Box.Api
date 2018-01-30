@@ -26,7 +26,6 @@ namespace Box.Api.Data.DataContexts.Configurations
 
             builder.HasOne( c => c.Tray )
                 .WithMany( t => t.Cards )
-                .HasForeignKey( c => c.Id )
                 .OnDelete( DeleteBehavior.Cascade );
         }
     }

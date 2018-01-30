@@ -34,6 +34,7 @@ namespace Box.Api.Data.DataContexts
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySql(Configuration.GetConnectionString("BoxApiDatabase"));
+            //optionsBuilder.UseSqlServer(Configuration.GetConnectionString("BoxApiDatabase"));
         }
 
 

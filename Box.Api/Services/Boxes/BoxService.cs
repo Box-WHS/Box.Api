@@ -145,16 +145,21 @@ namespace Box.Api.Services.Boxes
             using (Context)
             {
                //var user = await GetUserById(userId);
-                var box = await Context.Boxes
-                    .AsNoTracking()
-                    .Include(b => b.User)
-                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User.Guid == userId);
+                //var box = await Context.Boxes
+                //    .AsNoTracking()
+                //    .Include(b => b.User)
+                //    .FirstOrDefaultAsync(b => b.Id == boxId && b.User.Guid == userId);
 
+                //var trays = await Context.Trays
+                //    .AsNoTracking()
+                //    .Include(t => t.Box)
+                //    .Include(t => t.User)
+                //    .Where(t => t.Box == box)
+                //    .ToListAsync();
+                    
                 var trays = await Context.Trays
-                    .AsNoTracking()
+                    .Where(t => t.Box.Id == boxId && t.Box.User.Guid == userId)
                     .Include(t => t.Box)
-                    .Include(t => t.User)
-                    .Where(t => t.Box == box)
                     .ToListAsync();
 
                 return trays.ConvertAll(t => t.ToTrayDto());
@@ -205,20 +210,24 @@ namespace Box.Api.Services.Boxes
         {
             using (Context)
             {
-               //var user = await GetUserById(userId);
-                var box = await Context.Boxes
-                    .Include(b => b.User)
-                    .FirstOrDefaultAsync(b => b.Id == boxId && b.User.Guid == userId);
+                ////var user = await GetUserById(userId);
+                //var box = await Context.Boxes
+                //    .Include(b => b.User)
+                //    .FirstOrDefaultAsync(b => b.Id == boxId && b.User.Guid == userId);
 
-                var tray = await Context.Trays
-                    .Where(t => t.Box == box && t.Id == trayId)
-                    .FirstOrDefaultAsync();
+                //var tray = await Context.Trays
+                //    .Where(t => t.Box == box && t.Id == trayId)
+                //    .FirstOrDefaultAsync();
+
+                //var cards = await Context.Cards
+                //    .Include(c => c.Tray)
+                //    .Where(c => c.Tray == tray)
+                //    .ToListAsync();
 
                 var cards = await Context.Cards
+                    .Where(c => c.Tray.Id == trayId && c.Tray.Box.User.Guid == userId)
                     .Include(c => c.Tray)
-                    .Where(c => c.Tray == tray)
                     .ToListAsync();
-
                 return cards.ConvertAll(c => c.ToCardDto());
             }
         }

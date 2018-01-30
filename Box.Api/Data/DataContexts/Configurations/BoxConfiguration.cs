@@ -19,7 +19,6 @@ namespace Box.Api.Data.DataContexts.Configurations
 
             builder.HasMany( b => b.Trays )
                 .WithOne( t => t.Box )
-                .HasForeignKey( b => b.Id )
                 .OnDelete( DeleteBehavior.Restrict );
         }
     }
